@@ -1,0 +1,71 @@
+{
+    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {},
+    "triggers": {
+        "request": {
+            "type": "Request",
+            "kind": "Http",
+            "inputs": {
+                "schema": {}
+            }
+        }
+    },
+    "actions": {
+        "ResponseError": {
+            "runAfter": {
+                "Validate_Input": [
+                    "Failed"
+                ]
+            },
+            "type": "Response",
+            "kind": "Http",
+            "inputs": {
+                "body": "@outputs('Validate_Input')",
+                "statusCode": 400
+            }
+        },
+        "ResponseSuccess": {
+            "runAfter": {
+                "Transform_XML": [
+                    "Succeeded"
+                ]
+            },
+            "type": "Response",
+            "inputs": {
+                "body": "@json(body('Transform_XML'))",
+                "statusCode": 200
+            }
+        },
+        "Transform_XML": {
+            "runAfter": {
+                "Validate_Input": [
+                    "Succeeded"
+                ]
+            },
+            "type": "Xslt",
+            "inputs": {
+                "content": "@{triggerBody()}",
+                "integrationAccount": {
+                    "map": {
+                        "name": "GetLastObject"
+                    }
+                },
+                "transformOptions": "ApplyXsltOutputAttributes"
+            }
+        },
+        "Validate_Input": {
+            "runAfter": {},
+            "type": "XmlValidation",
+            "inputs": {
+                "content": "@{triggerBody()}",
+                "integrationAccount": {
+                    "schema": {
+                        "name": "XmlInputSchema"
+                    }
+                }
+            }
+        }
+    },
+    "outputs": {}
+}

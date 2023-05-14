@@ -1,0 +1,13 @@
+<Root>
+    <ObjectList>
+        <Object>
+            <Value>123</Value>
+        </Object>
+        <Object>
+            <Value>345</Value>
+        </Object>
+         <Object>
+            <Value>abc</Value>
+        </Object>
+    </ObjectList>
+</Root>
